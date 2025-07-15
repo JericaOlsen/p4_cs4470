@@ -470,7 +470,15 @@ class ExactInference(InferenceModule):
             game_state: The current game state
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        newdist = DiscreteDistribution()
+
+        for oldPos in self.allPositions:
+            transitionDist = self.getPositionDistribution(game_state, oldPos)
+
+            for newPos, prob in transitionDist.items():
+                newdist[newPos] += self.beliefs[oldPos] * prob
+
+        self.beliefs = newdist
 
     def getBeliefDistribution(self) -> DiscreteDistribution:
         """
