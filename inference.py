@@ -127,6 +127,8 @@ class DiscreteDistribution(dict):
         
         first_total = self.total()
  
+        if first_total == 0:
+            return
         for d in self:
             prop = self[d]/first_total
 
@@ -445,8 +447,14 @@ class ExactInference(InferenceModule):
             gameState: The current game state
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
-
+        for ghost in self.allPositions:
+            observationProb = self.getObservationProb(
+                observation,
+                gameState.getPacmanPosition(),
+                ghost,
+                self.getJailPosition()
+            )
+            self.beliefs[ghost] = self.beliefs[ghost] * observationProb
         self.beliefs.normalize()
 
     def elapseTime(self, game_state: Any) -> None:
