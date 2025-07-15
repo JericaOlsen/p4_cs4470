@@ -378,6 +378,7 @@ class InferenceModule:
         """
         raise NotImplementedError
 
+
     def observeUpdate(self, observation: Optional[float], gameState: Any) -> None:
         """
         Update beliefs based on the given distance observation and gameState.
@@ -387,6 +388,7 @@ class InferenceModule:
             gameState: The current game state
         """
         raise NotImplementedError
+
 
     def elapseTime(self, gameState: Any) -> None:
         """
@@ -406,7 +408,6 @@ class InferenceModule:
             The current belief distribution
         """
         raise NotImplementedError
-
 
 class ExactInference(InferenceModule):
     """
@@ -528,7 +529,12 @@ class ParticleFilter(InferenceModule):
         """
         self.particles = []
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        nums = 0
+        while(nums < self.numParticles):
+            
+            for action in self.legalPositions:
+                self.particles.append(action)
+                nums +=1
 
     def observeUpdate(self, observation: Optional[float], gameState: Any) -> None:
         """
@@ -572,8 +578,13 @@ class ParticleFilter(InferenceModule):
             The current belief distribution
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        dist = DiscreteDistribution()
 
+        for p in self.particles:
+            dist[p] = 10
+        
+        dist.normalize() 
+        return dist
 
 class JointParticleFilter(ParticleFilter):
     """
