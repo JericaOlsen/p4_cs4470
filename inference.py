@@ -585,8 +585,17 @@ class ParticleFilter(InferenceModule):
             gameState: The current game state
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined
+        belief = self.getBeliefDistribution()
 
+        distribution = DiscreteDistribution()
+
+        for oldPos in self.allPositions:
+            new_dist = self.getPositionDistribution(gameState, oldPos)
+            for pos, prob in new_dist.items():
+                distribution[pos] += belief[oldPos] * prob
+
+                
+        self.beliefs = distribution
 
     def getBeliefDistribution(self) -> DiscreteDistribution:
         """
@@ -647,7 +656,16 @@ class JointParticleFilter(ParticleFilter):
         """
         self.particles = []
         "*** YOUR CODE HERE ***"
-        raiseNotDefined
+        pos = list(itertools.product(self.legalPositions, repeat = self.numGhosts))
+        
+        nums = 0
+        while(nums < self.numParticles):
+            
+            for action in pos:
+                self.particles.append(action)
+                nums +=1
+
+
 
     def addGhostAgent(self, agent: Any) -> None:
         """
