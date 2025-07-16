@@ -471,15 +471,17 @@ class ExactInference(InferenceModule):
             game_state: The current game state
         """
         "*** YOUR CODE HERE ***"
-        newdist = DiscreteDistribution()
+        belief = self.getBeliefDistribution()
+
+        distribution = DiscreteDistribution()
 
         for oldPos in self.allPositions:
-            transitionDist = self.getPositionDistribution(game_state, oldPos)
+            new_dist = self.getPositionDistribution(game_state, oldPos)
+            for pos, prob in new_dist.items():
+                distribution[pos] += belief[oldPos] * prob
 
-            for newPos, prob in transitionDist.items():
-                newdist[newPos] += self.beliefs[oldPos] * prob
-
-        self.beliefs = newdist
+                
+        self.beliefs = distribution
 
     def getBeliefDistribution(self) -> DiscreteDistribution:
         """
@@ -553,8 +555,27 @@ class ParticleFilter(InferenceModule):
             gameState: The current game state
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
 
+        pacman = gameState.getPacmanPosition()
+        jail = self.getJailPosition()
+
+        distProb = DiscreteDistribution()
+
+        for particle in self.particles:
+            obsProb = self.getObservationProb(observation, pacman, particle, jail)
+            distProb[particle] = distProb.get(particle, 0) + obsProb
+
+        distProb.normalize()
+
+        if distProb.total() == 0:
+            self.initializeUniformly(gameState)
+            return
+        
+        newParticles = []
+        for i in range(self.numParticles):
+            newParticles.append(distProb.sample())
+        self.particles = newParticles
+        
     def elapseTime(self, gameState: Any) -> None:
         """
         Sample each particle's next state based on its current state and the
@@ -564,7 +585,8 @@ class ParticleFilter(InferenceModule):
             gameState: The current game state
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        raiseNotDefined
+
 
     def getBeliefDistribution(self) -> DiscreteDistribution:
         """
@@ -625,7 +647,8 @@ class JointParticleFilter(ParticleFilter):
         """
         self.particles = []
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        raiseNotDefined
+
     def addGhostAgent(self, agent: Any) -> None:
         """
         Each ghost agent is registered separately and stored (in case they are
